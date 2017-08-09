@@ -87,15 +87,13 @@ app.get("/scrape", function(req, res){
 // $("#scrape-button").on("click", function() {
 	app.get("/all", function(req, res) {
 	  // Find all in the scrapedData collection and send "found" result to the browser
-	  db.scrapedData.find({}, function(error, found) {
+	  Article.find({}, function(error, found) {
 	    if (error) {
 	      console.log(error);
 	    }
 	    else {
 	      alert("Found "+found.length+" new articles.");
 	      res.json(found);
-	      // Here we will append a new div for each article heading 
-	      // Include article notes & delete buttons
 	    }
 	  });
 	});
@@ -109,13 +107,22 @@ app.get("/scrape", function(req, res){
 // });
 
 // $(".noteButton").on("click", function() {
-// 	app.get("/", function(req, res) {
-// 		//Send a popup where user types a note
-// 		//Append the note into the popup (make sure they can add multiple notes)
+	//Send a popup where user types a note
+	//Append the note into the popup (make sure they can add multiple notes)
+	app.get("/", function(req, res) {
 
-// 		//Update this article in the database with your new note
-// 		// db.scrapedData.update({id: this.id}, {$set {"note": $("#added-note")}})
-// 	})
+		Article.findOne({ "_id": req.params.id })
+		//Populate the note and execute query
+		.populate("note")
+		.exec(function(error, doc) {
+		    if (error) {
+		      console.log(error);
+		    }
+		    else {
+		      res.json(doc);
+			}
+		});
+	})
 // });
 
 app.listen(8080, function() {
