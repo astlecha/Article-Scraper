@@ -1,5 +1,6 @@
 // Requires dependencies
 var express = require("express");
+var bodyParser = require("body-parser");
 var mongojs = require("mongojs");
 var mongoose = require("mongoose");
 
@@ -16,6 +17,11 @@ mongoose.Promise = Promise;
 
 // Initializes express
 var app = express();
+
+// Use body parser with our app
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 
 // Configures database
 var databaseUrl = "scraped";
