@@ -50,9 +50,9 @@ db.once("open", function() {
 // 	console.log("Database Error: ", error);
 // });
 
-app.get("/", function(req, res) {
-	console.log(res);
-})
+// app.get("/", function(req, res) {
+// 	console.log(res);
+// })
 
 // Scrape data from the New York Times
 app.get("/scrape", function(req, res){
@@ -67,8 +67,17 @@ app.get("/scrape", function(req, res){
 	    	title: title, 
 	    	link: link
 	    }
-	    db.scrapedData.insert(obj);
-	    console.log("object", obj);
+	    // Pass obj to entry
+	    var entry = new Article(obj);
+	    // Save new entry to the db
+	    entry.save(function(err, doc) {
+	    	if (err) {
+          		console.log(err);
+        	}
+        	else {
+          		console.log(doc);
+        	}
+	    });
 	  });
 
 	  res.send("/");
@@ -76,19 +85,20 @@ app.get("/scrape", function(req, res){
 });
 
 // $("#scrape-button").on("click", function() {
-// 	app.get("/all", function(req, res) {
-// 	  // Find all in the scrapedData collection and send "found" result to the browser
-// 	  db.scrapedData.find({}, function(error, found) {
-// 	    if (error) {
-// 	      console.log(error);
-// 	    }
-// 	    else {
-// 	      alert("Found "+found.length+" new articles.");
-// 	      res.json(found);
-// 	      //Here we will append a new div for each article heading with article notes & delete buttons
-// 	    }
-// 	  });
-// 	});
+	app.get("/all", function(req, res) {
+	  // Find all in the scrapedData collection and send "found" result to the browser
+	  db.scrapedData.find({}, function(error, found) {
+	    if (error) {
+	      console.log(error);
+	    }
+	    else {
+	      alert("Found "+found.length+" new articles.");
+	      res.json(found);
+	      // Here we will append a new div for each article heading 
+	      // Include article notes & delete buttons
+	    }
+	  });
+	});
 // });
 
 // $(".deleteButton").on("click", function() {
