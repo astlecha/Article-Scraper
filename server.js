@@ -23,6 +23,9 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 
+// Make public a static dir
+app.use(express.static("public"));
+
 // Configures database
 var databaseUrl = "scraped";
 var collections = ["scrapedData"];
