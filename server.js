@@ -26,15 +26,29 @@ app.use(bodyParser.urlencoded({
 // Make public a static dir
 app.use(express.static("public"));
 
-// Configures database
-var databaseUrl = "scraped";
-var collections = ["scrapedData"];
+// Database configuration with mongoose
+mongoose.connect("mongodb://localhost/scraped");
+var db = mongoose.connection;
 
-// Hooks mongojs configuration to the db variable
-var db = mongojs(databaseUrl, collections);
-db.on("error", function(error){
-	console.log("Database Error: ", error);
+// Show any mongoose errors
+db.on("error", function(error) {
+  console.log("Mongoose Error: ", error);
 });
+
+// Once logged in to the db through mongoose, log a success message
+db.once("open", function() {
+  console.log("Mongoose connection successful.");
+});
+
+// // Configures database
+// var databaseUrl = "scraped";
+// var collections = ["scrapedData"];
+
+// // Hooks mongojs configuration to the db variable
+// var db = mongojs(databaseUrl, collections);
+// db.on("error", function(error){
+// 	console.log("Database Error: ", error);
+// });
 
 app.get("/", function(req, res) {
 	console.log(res);
