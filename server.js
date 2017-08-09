@@ -84,46 +84,41 @@ app.get("/scrape", function(req, res){
 	});
 });
 
-// $("#scrape-button").on("click", function() {
-	app.get("/all", function(req, res) {
-	  // Find all in the scrapedData collection and send "found" result to the browser
-	  Article.find({}, function(error, found) {
-	    if (error) {
-	      console.log(error);
-	    }
-	    else {
-	      alert("Found "+found.length+" new articles.");
-	      res.json(found);
-	    }
-	  });
-	});
-// });
 
-// $(".deleteButton").on("click", function() {
+app.get("/all", function(req, res) {
+  // Find all in the scrapedData collection and send "found" result to the browser
+  Article.find({}, function(error, found) {
+    if (error) {
+      console.log(error);
+    }
+    else {
+      alert("Found "+found.length+" new articles.");
+      res.json(found);
+    }
+  });
+});
+
+
 // 	app.get("/", function(req, res) {
 // 		//Delete this article from the database
 // 		db.scrapedData.remove({id: this.id})
 // 	})
-// });
 
-// $(".noteButton").on("click", function() {
-	//Send a popup where user types a note
-	//Append the note into the popup (make sure they can add multiple notes)
-	app.get("/", function(req, res) {
 
-		Article.findOne({ "_id": req.params.id })
-		//Populate the note and execute query
-		.populate("note")
-		.exec(function(error, doc) {
-		    if (error) {
-		      console.log(error);
-		    }
-		    else {
-		      res.json(doc);
-			}
-		});
-	})
-// });
+app.get("/articles/:id", function(req, res) {
+
+	Article.findOne({ "_id": req.params.id })
+	//Populate the note and execute query
+	.populate("note")
+	.exec(function(error, doc) {
+	    if (error) {
+	      console.log(error);
+	    }
+	    else {
+	      res.json(doc);
+		}
+	});
+})
 
 app.listen(8080, function() {
   console.log("App running on port 8080!");
