@@ -7,6 +7,13 @@ var mongoose = require("mongoose");
 var request = require("request");
 var cheerio = require("cheerio");
 
+// Route the models
+var Note = require("./models/Note.js");
+var Article = require("./models/Article.js");
+
+// Set mongoose to leverage built in JavaScript ES6 Promises
+mongoose.Promise = Promise;
+
 // Initializes express
 var app = express();
 
@@ -45,38 +52,38 @@ app.get("/scrape", function(req, res){
 	});
 });
 
-$("#scrape-button").on("click", function() {
-	app.get("/all", function(req, res) {
-	  // Find all in the scrapedData collection and send "found" result to the browser
-	  db.scrapedData.find({}, function(error, found) {
-	    if (error) {
-	      console.log(error);
-	    }
-	    else {
-	      alert("Found "+found.length+" new articles.");
-	      res.json(found);
-	      //Here we will append a new div for each article heading with article notes & delete buttons
-	    }
-	  });
-	});
-});
+// $("#scrape-button").on("click", function() {
+// 	app.get("/all", function(req, res) {
+// 	  // Find all in the scrapedData collection and send "found" result to the browser
+// 	  db.scrapedData.find({}, function(error, found) {
+// 	    if (error) {
+// 	      console.log(error);
+// 	    }
+// 	    else {
+// 	      alert("Found "+found.length+" new articles.");
+// 	      res.json(found);
+// 	      //Here we will append a new div for each article heading with article notes & delete buttons
+// 	    }
+// 	  });
+// 	});
+// });
 
-$(".deleteButton").on("click", function() {
-	app.get("/", function(req, res) {
-		//Delete this article from the database
-		db.scrapedData.remove({id: this.id})
-	})
-});
+// $(".deleteButton").on("click", function() {
+// 	app.get("/", function(req, res) {
+// 		//Delete this article from the database
+// 		db.scrapedData.remove({id: this.id})
+// 	})
+// });
 
-$(".noteButton").on("click", function() {
-	app.get("/", function(req, res) {
-		//Send a popup where user types a note
-		//Append the note into the popup (make sure they can add multiple notes)
+// $(".noteButton").on("click", function() {
+// 	app.get("/", function(req, res) {
+// 		//Send a popup where user types a note
+// 		//Append the note into the popup (make sure they can add multiple notes)
 
-		//Update this article in the database with your new note
-		// db.scrapedData.update({id: this.id}, {$set {"note": $("#added-note")}})
-	})
-});
+// 		//Update this article in the database with your new note
+// 		// db.scrapedData.update({id: this.id}, {$set {"note": $("#added-note")}})
+// 	})
+// });
 
 app.listen(8080, function() {
   console.log("App running on port 8080!");
