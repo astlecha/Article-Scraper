@@ -1,5 +1,6 @@
 // Requires dependencies
 var express = require("express");
+var expressHandlebars = require("express-handlebars");
 var bodyParser = require("body-parser");
 var mongojs = require("mongojs");
 var mongoose = require("mongoose");
@@ -23,8 +24,13 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 
-// Make public a static dir
-app.use(express.static("public"));
+// Make views a static dir
+app.use(express.static("views"));
+
+app.engine("handlebars", expressHandlebars({
+  defaultLayout: "main"
+}));
+app.set("view engine", "handlebars");
 
 // Database configuration with mongoose
 mongoose.connect("mongodb://localhost/scraped");
@@ -40,19 +46,13 @@ db.once("open", function() {
   console.log("Mongoose connection successful.");
 });
 
-// // Configures database
-// var databaseUrl = "scraped";
-// var collections = ["scrapedData"];
+// Configures database
+var databaseUrl = "scraped";
+var collections = ["scrapedData"];
 
-// // Hooks mongojs configuration to the db variable
-// var db = mongojs(databaseUrl, collections);
-// db.on("error", function(error){
-// 	console.log("Database Error: ", error);
-// });
-
-// app.get("/", function(req, res) {
-// 	console.log(res);
-// })
+app.get("/", function(req, res) {
+	res.render("index")
+})
 
 // Scrape data from the New York Times
 app.get("/scrape", function(req, res){
@@ -118,7 +118,7 @@ app.get("/articles/:id", function(req, res) {
 	      res.json(doc);
 		}
 	});
-})
+});
 
 app.listen(8080, function() {
   console.log("App running on port 8080!");
