@@ -2,8 +2,9 @@
 var express = require("express");
 var expressHandlebars = require("express-handlebars");
 var bodyParser = require("body-parser");
-var mongojs = require("mongojs");
 var mongoose = require("mongoose");
+// Morgan logs server nd db interactions
+var logger = require("morgan");
 
 // Require request and cheerio for scraping
 var request = require("request");
@@ -19,7 +20,8 @@ mongoose.Promise = Promise;
 // Initializes express
 var app = express();
 
-// Use body parser with our app
+// Use body parser & morgan with our app
+app.use(logger("dev"));
 app.use(bodyParser.urlencoded({
   extended: false
 }));
@@ -33,80 +35,81 @@ app.engine("handlebars", expressHandlebars({
 app.set("view engine", "handlebars");
 
 // Database configuration with mongoose
-mongoose.connect("mongodb://localhost/scraped");
-var db = mongoose.connection;
-
-// Show any mongoose errors
-db.on("error", function(error) {
-  console.log("Mongoose Error: ", error);
+var db = process.env.MONGODB_URI || "mongodb://localhost/scraped-websites";
+mongoose.connect(db, function(error) {
+	if(error){
+		console.log(error);
+	}
+	else {
+		console.log("Mongoose connection successful.");
+	}
 });
 
-// Once logged in to the db through mongoose, log a success message
-db.once("open", function() {
-  console.log("Mongoose connection successful.");
-});
-
-// Configures database
-var databaseUrl = "scraped";
-var collections = ["scrapedData"];
+//===========================================
+//Routes
+//===========================================
 
 app.get("/", function(req, res) {
-	res.render("index")
+
+	res.render("index");
 })
 
 // Scrape data from the New York Times
 app.get("/scrape", function(req, res){
-	request("http://nytimes.com/", function(error, response, html) {
+	request("http://www.echojs.com/", function(error, response, html) {
 
-	  var $ = cheerio.load(html);
+		var $ = cheerio.load(html);
 
-	  $("h2").each(function(i, element) {
-	    var title = $(element).text();
-	    var link = $(element).children().attr("href");
-	    var obj = {
-	    	title: title, 
-	    	link: link
-	    }
-	    // Pass obj to entry
-	    var entry = new Article(obj);
-	    // Save new entry to the db
-	    entry.save(function(err, doc) {
-	    	if (err) {
-          		console.log(err);
-        	}
-        	else {
-          		console.log(doc);
-        	}
-	    });
-	  });
+		$("article h2").each(function(i, element) {
+	    var result = {};
 
-	  res.send("/");
+	    result.title = $(this).children("a").text();
+      	result.link = $(this).children("a").attr("href");
+
+      	// Create a new entry and save to the db
+      	var entry = new Article(result);
+
+	      entry.save(function(err, doc) {
+	        if (err) {
+	          console.log(err);
+	        }
+	        else {
+	          console.log(doc);
+	        }
+	  	  });
+
+		});
 	});
+	// Send browser back to root directory
+	 Article.find({}, function(error, found) {
+    if (error) {
+      console.log(error);
+    }
+    else {
+      // alert("Found "+found.length+" new articles.");
+	var results = { articles : found }
+      res.render("index", results);
+    }
+  });
+	
 });
 
-
-app.get("/all", function(req, res) {
-  // Find all in the scrapedData collection and send "found" result to the browser
+// Retrieve all data from the scrapedData collection and send it to the browser
+app.get("/articles", function(req, res) {
   Article.find({}, function(error, found) {
     if (error) {
       console.log(error);
     }
     else {
-      alert("Found "+found.length+" new articles.");
-      res.json(found);
+      // alert("Found "+found.length+" new articles.");
+	var results = { articles : found }
+      res.render("index", results);
     }
   });
 });
 
-
-// 	app.get("/", function(req, res) {
-// 		//Delete this article from the database
-// 		db.scrapedData.remove({id: this.id})
-// 	})
-
-
+// Retrieve data from one article in the scrapedData collection & send to browser
 app.get("/articles/:id", function(req, res) {
-
 	Article.findOne({ "_id": req.params.id })
 	//Populate the note and execute query
 	.populate("note")

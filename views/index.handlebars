@@ -1,10 +1,10 @@
 <div class="container">
-	<nav class="navbar navbar-inverse bg-primary">
+	<nav class="navbar navbar-inverse bg-primary" style="padding:10px;">
 		<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
 	      <div class="navbar-nav">
-	        <a class="nav-item nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
-	        <a class="nav-item nav-link" href="/saved">Saved Articles</a>
-	        <button type="button" class="btn btn-danger" id="scrape-button">Scrape New Articles!</button>
+	      	<a href="/"><button type="button" class="btn btn-primary" id="home-button">Home</button></a>
+	        <a href="/save"><button type="button" class="btn btn-primary" id="saved-button">Saved</button></a>
+		    <a class="btn btn-danger" href="/scrape" id="scrape-button">Scrape New Articles!</a>
 	      </div>
 	    </div>
 	</nav>
@@ -14,9 +14,18 @@
 	</div>
 	<div class="row">
 		<div class="col-lg-12" id="allArticles">
-
 			<!-- Scraped Data gets appended here! -->
+			{{#each articles}}
+				<form action="/articles" method="GET">
+					<div class="panel panel-default" style="padding:20px; background-color:#A9EAFF; text-align:center;">
+			          <h3>{{this.title}}</h3>
+			          <a href="{{this.link}}"><p>Link to Article</p></a>
+			          <button type="submit" class="btn btn-default noteButton" action="/all/{{this._id}}" method="GET">Add Note</button>
 
+			          <button type="submit" class="btn btn-default deleteButton">Delete Article</button>
+			        </div>
+		        </form>
+			{{/each}}
 		</div>
 	</div>
 </div>
