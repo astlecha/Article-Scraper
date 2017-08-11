@@ -125,6 +125,21 @@ app.get("/articles/:id", function(req, res) {
 	});
 });
 
+// Send new comment to the browser
+app.post("/articles/:id", function(req, res) {
+
+  var userComment = new Note(req.body);
+
+  userComment.save(function(error, doc) {
+    if (error) {
+      res.send(error);
+    }
+    else {
+      res.send(doc);
+    }
+  });
+});
+
 app.listen(8080, function() {
   console.log("App running on port 8080!");
 });
