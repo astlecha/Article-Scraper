@@ -1,14 +1,19 @@
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="modelAriaLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <h5 class="modal-title">Comment</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <p>Add Note</p>
+        <form action="/{{this.id}}?_method=PUT" method="POST">
+        <div class="form-group">
+		    <label for="userComment">What are your thoughts?</label>
+		    <textarea class="form-control" id="userComment" rows="3"></textarea>
+		 </div>
+		</form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -41,7 +46,7 @@
 					<div class="panel panel-default" style="padding:20px; background-color:#A9EAFF; text-align:center;">
 			          <h3>{{this.title}}</h3>
 			          <a href="{{this.link}}"><p>Link to Article</p></a>
-			          <button type="submit" class="btn btn-default noteButton" href="/{{this._id}}" data-toggle="modal" data-target="#myModal">Add Note</button>
+			          <button type="submit" class="btn btn-default noteButton" data-toggle="modal" data-target="#myModal">Add Note</button>
 
 			          <button type="submit" class="btn btn-default deleteButton">Delete Article</button>
 			        </div>

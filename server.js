@@ -110,7 +110,9 @@ app.get("/articles", function(req, res) {
 
 // Retrieve data from one article in the scrapedData collection & send to browser
 app.get("/articles/:id", function(req, res) {
-	Article.findOne({ "_id": req.params.id })
+	Article.findOneAndUpdate({ "_id": req.params.id }
+		// , {$inc: { "note": res.body}}
+		)
 	//Populate the note and execute query
 	.populate("note")
 	.exec(function(error, doc) {
