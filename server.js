@@ -34,15 +34,27 @@ app.engine("handlebars", expressHandlebars({
 }));
 app.set("view engine", "handlebars");
 
+//-----------Define Local MongoDB URI-------------
+var databaseUri = "mongodb://localhost/scraped-websites";
+
 // Database configuration with mongoose
-var db = process.env.MONGODB_URI || "mongodb://localhost/scraped-websites";
-mongoose.connect(db, function(error) {
-	if(error){
-		console.log(error);
-	}
-	else {
-		console.log("Mongoose connection successful.");
-	}
+if (process.env.MONGODB_URI) {
+	// HEROKU EXECUTION
+	mongoose.connect(process.env.MONGODB_URI);
+} 
+else {
+	// LOCAL MACHINE EXECUTION
+	mongoose.connect(databaseUri);
+}
+
+var db = mongoose.connection;
+
+db.on("error", function(err) {
+	console.log('Mongoose error: ', err);
+});
+
+db.once("open", function() {
+	console.log("Mongoose connection successful.");
 });
 
 //===========================================
