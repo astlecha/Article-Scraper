@@ -121,7 +121,8 @@ app.get("/articles", function(req, res) {
 });
 
 // Retrieve data from one article in the scrapedData collection & send to browser
-app.get("/articles/:id", function(req, res) {
+//might need api routes folder with router.post
+app.get("/api/articles/:id", function(req, res) {
 	Article.findOneAndUpdate({ "_id": req.params.id }
 		// , {$inc: { "note": res.body}}
 		)
